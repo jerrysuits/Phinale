@@ -1,0 +1,17 @@
+# CMake build dirs
+cmake-build-*/
+build/
+
+# CLion/JetBrains
+.idea/
+
+# Compiled objects/binaries
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.so
+
+# OS junk
+.DS_Store
