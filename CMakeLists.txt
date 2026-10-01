@@ -16,6 +16,7 @@ add_library(phinale_core
         src/token.cpp
         src/lexer.cpp
         src/parser.cpp
+        src/sema.cpp
 )
 target_include_directories(phinale_core PUBLIC include)
 
