@@ -15,6 +15,7 @@ add_compile_options(-Wall -Wextra -Wpedantic)
 add_library(phinale_core
         src/token.cpp
         src/lexer.cpp
+        src/parser.cpp
 )
 target_include_directories(phinale_core PUBLIC include)
 
