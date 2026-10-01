@@ -19,6 +19,8 @@ add_library(phinale_core
         src/sema.cpp
         src/tac.cpp
         src/ir_builder.cpp
+        src/cfg.cpp
+        src/cfg_builder.cpp
 )
 target_include_directories(phinale_core PUBLIC include)
 
