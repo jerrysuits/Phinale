@@ -18,6 +18,7 @@ add_library(phinale_core
         src/parser.cpp
         src/sema.cpp
         src/tac.cpp
+        src/ir_builder.cpp
 )
 target_include_directories(phinale_core PUBLIC include)
 
