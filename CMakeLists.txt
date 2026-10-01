@@ -21,3 +21,9 @@ target_include_directories(phinale_core PUBLIC include)
 # CLI driver
 add_executable(phinale src/main.cpp)
 target_link_libraries(phinale PRIVATE phinale_core)
+
+# Tests
+enable_testing()
+add_executable(test_lexer tests/test_lexer.cpp)
+target_link_libraries(test_lexer PRIVATE phinale_core)
+add_test(NAME test_lexer COMMAND test_lexer)
