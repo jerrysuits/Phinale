@@ -57,3 +57,7 @@ add_test(NAME test_dominance COMMAND test_dominance)
 add_executable(test_ssa tests/test_ssa.cpp)
 target_link_libraries(test_ssa PRIVATE phinale_core)
 add_test(NAME test_ssa COMMAND test_ssa)
+
+add_executable(test_ssa_destruction tests/test_ssa_destruction.cpp)
+target_link_libraries(test_ssa_destruction PRIVATE phinale_core)
+add_test(NAME test_ssa_destruction COMMAND test_ssa_destruction)
