@@ -1,17 +1,27 @@
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <utility>
 #include <variant>
 #include <vector>
 
 namespace phinale {
 
+using BlockID = std::size_t;
+using VRegID = std::size_t;
+
 struct VReg {
     std::size_t id{0};
+    std::optional<std::size_t> version{std::nullopt};
+    std::optional<std::size_t> original_id{std::nullopt};
 
     bool operator==(const VReg& other) const noexcept {
+        if (version.has_value() && other.version.has_value()) {
+            return id == other.id && version == other.version;
+        }
         return id == other.id;
     }
 
@@ -88,6 +98,39 @@ struct Operand {
     }
 };
 
+struct PhiNode {
+    VReg dest;
+    std::vector<std::pair<BlockID, Operand>> incoming;
+    std::optional<VRegID> original_var{std::nullopt};
+
+    void add_incoming(BlockID block, Operand op) {
+        for (auto& entry : incoming) {
+            if (entry.first == block) {
+                entry.second = std::move(op);
+                return;
+            }
+        }
+        incoming.emplace_back(block, std::move(op));
+    }
+
+    std::optional<Operand> get_incoming(BlockID block) const {
+        for (const auto& entry : incoming) {
+            if (entry.first == block) {
+                return entry.second;
+            }
+        }
+        return std::nullopt;
+    }
+
+    bool operator==(const PhiNode& other) const noexcept {
+        return dest == other.dest && incoming == other.incoming;
+    }
+
+    bool operator!=(const PhiNode& other) const noexcept {
+        return !(*this == other);
+    }
+};
+
 enum class Opcode {
     // Arithmetic & Bitwise
     ADD,
@@ -140,6 +183,7 @@ struct TACProgram {
 };
 
 std::string to_string(const Operand& op);
+std::string to_string(const PhiNode& phi);
 std::string to_string(const Instruction& inst);
 std::string to_string(const TACFunction& func);
 std::string to_string(const TACProgram& prog);

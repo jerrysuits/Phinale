@@ -12,7 +12,11 @@
 
 namespace phinale {
 
-using BlockID = std::size_t;
+struct PhiList : public std::vector<PhiNode> {
+    using std::vector<PhiNode>::vector;
+    PhiList& operator()() noexcept { return *this; }
+    const PhiList& operator()() const noexcept { return *this; }
+};
 
 class BasicBlock {
 public:
@@ -22,6 +26,16 @@ public:
     BlockID id() const noexcept { return id_; }
     const std::optional<std::string>& label() const noexcept { return label_; }
     void set_label(std::string label) { label_ = std::move(label); }
+
+    PhiList phis;
+
+    void add_phi(PhiNode phi) {
+        phis.push_back(std::move(phi));
+    }
+
+    bool has_phi() const noexcept {
+        return !phis.empty();
+    }
 
     std::vector<Instruction>& instructions() noexcept { return instructions_; }
     const std::vector<Instruction>& instructions() const noexcept { return instructions_; }
@@ -44,10 +58,6 @@ public:
         if (instructions_.empty()) return false;
         Opcode op = instructions_.back().opcode;
         return op == Opcode::JUMP || op == Opcode::JUMP_IF || op == Opcode::RETURN;
-    }
-
-    bool has_phi() const noexcept {
-        return false;
     }
 
 private:
