@@ -19,8 +19,6 @@ add_library(phinale_core
         src/sema.cpp
         src/tac.cpp
         src/ir_builder.cpp
-        src/cfg.cpp
-        src/cfg_builder.cpp
 )
 target_include_directories(phinale_core PUBLIC include)
 
@@ -42,7 +40,3 @@ add_test(NAME test_parser COMMAND test_parser)
 add_executable(test_ir tests/test_ir.cpp)
 target_link_libraries(test_ir PRIVATE phinale_core)
 add_test(NAME test_ir COMMAND test_ir)
-
-add_executable(test_cfg tests/test_cfg.cpp)
-target_link_libraries(test_cfg PRIVATE phinale_core)
-add_test(NAME test_cfg COMMAND test_cfg)
