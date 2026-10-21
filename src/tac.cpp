@@ -20,6 +20,16 @@ std::string to_string(const Operand& op) {
     return "?";
 }
 
+std::string to_string(const PhiNode& phi) {
+    std::ostringstream ss;
+    ss << "v" << phi.dest.id << " = phi";
+    for (std::size_t i = 0; i < phi.incoming.size(); ++i) {
+        if (i > 0) ss << ",";
+        ss << " [B" << phi.incoming[i].first << ": " << to_string(phi.incoming[i].second) << "]";
+    }
+    return ss.str();
+}
+
 static std::string op_symbol(Opcode op) {
     switch (op) {
         case Opcode::ADD: return "+";
@@ -114,9 +124,9 @@ std::string to_string(const TACFunction& func) {
         if (i > 0) ss << ", ";
         ss << "v" << func.params[i].id;
     }
-    ss << "):\n";
+    ss << "):\\n";
     for (const auto& inst : func.instructions) {
-        ss << to_string(inst) << "\n";
+        ss << to_string(inst) << "\\n";
     }
     return ss.str();
 }
@@ -124,7 +134,7 @@ std::string to_string(const TACFunction& func) {
 std::string to_string(const TACProgram& prog) {
     std::ostringstream ss;
     for (std::size_t i = 0; i < prog.functions.size(); ++i) {
-        if (i > 0) ss << "\n";
+        if (i > 0) ss << "\\n";
         ss << to_string(prog.functions[i]);
     }
     return ss.str();

@@ -33,6 +33,9 @@ void ControlFlowGraph::dump_dot(std::ostream& os) const {
         }
 
         std::ostringstream insts_ss;
+        for (const auto& phi : bb->phis) {
+            insts_ss << "  " << to_string(phi) << "\n";
+        }
         for (const auto& inst : bb->instructions()) {
             insts_ss << to_string(inst) << "\n";
         }
