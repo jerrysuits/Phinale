@@ -21,6 +21,7 @@ add_library(phinale_core
         src/ir_builder.cpp
         src/cfg.cpp
         src/cfg_builder.cpp
+        src/dominance.cpp
 )
 target_include_directories(phinale_core PUBLIC include)
 
