@@ -47,3 +47,7 @@ add_test(NAME test_ir COMMAND test_ir)
 add_executable(test_cfg tests/test_cfg.cpp)
 target_link_libraries(test_cfg PRIVATE phinale_core)
 add_test(NAME test_cfg COMMAND test_cfg)
+
+add_executable(test_dominance tests/test_dominance.cpp)
+target_link_libraries(test_dominance PRIVATE phinale_core)
+add_test(NAME test_dominance COMMAND test_dominance)
