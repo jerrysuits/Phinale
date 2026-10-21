@@ -2,6 +2,7 @@
 
 #include "phinale/tac.h"
 
+#include <algorithm>
 #include <cstddef>
 #include <memory>
 #include <optional>
@@ -52,6 +53,26 @@ public:
 
     void add_predecessor(BasicBlock* pred) {
         predecessors_.push_back(pred);
+    }
+
+    void remove_successor(BasicBlock* succ) {
+        successors_.erase(std::remove(successors_.begin(), successors_.end(), succ), successors_.end());
+    }
+
+    void remove_predecessor(BasicBlock* pred) {
+        predecessors_.erase(std::remove(predecessors_.begin(), predecessors_.end(), pred), predecessors_.end());
+    }
+
+    void replace_successor(BasicBlock* old_succ, BasicBlock* new_succ) {
+        for (auto& s : successors_) {
+            if (s == old_succ) s = new_succ;
+        }
+    }
+
+    void replace_predecessor(BasicBlock* old_pred, BasicBlock* new_pred) {
+        for (auto& p : predecessors_) {
+            if (p == old_pred) p = new_pred;
+        }
     }
 
     bool is_terminated() const noexcept {
