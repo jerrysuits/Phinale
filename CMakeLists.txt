@@ -24,6 +24,7 @@ add_library(phinale_core
         src/dominance.cpp
         src/ssa_builder.cpp
         src/ssa_destruction.cpp
+        src/liveness.cpp
 )
 target_include_directories(phinale_core PUBLIC include)
 
