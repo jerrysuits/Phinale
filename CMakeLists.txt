@@ -25,6 +25,7 @@ add_library(phinale_core
         src/ssa_builder.cpp
         src/ssa_destruction.cpp
         src/liveness.cpp
+        src/interference_graph.cpp
 )
 target_include_directories(phinale_core PUBLIC include)
 
