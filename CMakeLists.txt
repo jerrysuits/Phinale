@@ -63,3 +63,7 @@ add_test(NAME test_ssa COMMAND test_ssa)
 add_executable(test_ssa_destruction tests/test_ssa_destruction.cpp)
 target_link_libraries(test_ssa_destruction PRIVATE phinale_core)
 add_test(NAME test_ssa_destruction COMMAND test_ssa_destruction)
+
+add_executable(test_liveness_interference tests/test_liveness_interference.cpp)
+target_link_libraries(test_liveness_interference PRIVATE phinale_core)
+add_test(NAME test_liveness_interference COMMAND test_liveness_interference)
