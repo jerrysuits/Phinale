@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <optional>
 #include <string>
 #include <utility>
@@ -27,6 +28,11 @@ struct VReg {
 
     bool operator!=(const VReg& other) const noexcept {
         return !(*this == other);
+    }
+
+    bool operator<(const VReg& other) const noexcept {
+        if (id != other.id) return id < other.id;
+        return version < other.version;
     }
 };
 
@@ -189,3 +195,17 @@ std::string to_string(const TACFunction& func);
 std::string to_string(const TACProgram& prog);
 
 } // namespace phinale
+
+namespace std {
+template <>
+struct hash<phinale::VReg> {
+    std::size_t operator()(const phinale::VReg& v) const noexcept {
+        std::size_t h1 = std::hash<std::size_t>{}(v.id);
+        if (v.version.has_value()) {
+            std::size_t h2 = std::hash<std::size_t>{}(*v.version);
+            return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
+        }
+        return h1;
+    }
+};
+} // namespace std
