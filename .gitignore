@@ -15,3 +15,9 @@ build/
 
 # OS junk
 .DS_Store
+
+# Local inspection artifacts & notes
+*.dot
+*.png
+todo.md
+TODO.md
