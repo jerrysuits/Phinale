@@ -36,6 +36,9 @@ public:
     const std::unordered_set<VReg>& neighbors(VReg v) const;
     const std::unordered_map<VReg, std::unordered_set<VReg>>& nodes() const noexcept { return adj_; }
     const std::vector<CopyEdge>& moves() const noexcept { return move_list_; }
+    std::vector<CopyEdge>& moves() noexcept { return move_list_; }
+    void set_moves(std::vector<CopyEdge> moves) { move_list_ = std::move(moves); }
+    void merge_nodes(VReg keep, VReg remove);
     std::size_t edge_count() const noexcept;
     std::size_t max_degree() const noexcept;
 
