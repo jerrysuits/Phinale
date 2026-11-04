@@ -44,6 +44,24 @@ const std::unordered_set<VReg>& InterferenceGraph::neighbors(VReg v) const {
     return empty;
 }
 
+void InterferenceGraph::merge_nodes(VReg keep, VReg remove) {
+    if (keep == remove) return;
+    add_node(keep);
+    auto it = adj_.find(remove);
+    if (it == adj_.end()) return;
+
+    auto remove_neighbors = std::move(it->second);
+    adj_.erase(it);
+
+    for (const auto& w : remove_neighbors) {
+        adj_[w].erase(remove);
+        if (w != keep) {
+            adj_[keep].insert(w);
+            adj_[w].insert(keep);
+        }
+    }
+}
+
 std::size_t InterferenceGraph::edge_count() const noexcept {
     std::size_t total = 0;
     for (const auto& [_, nbrs] : adj_) {
