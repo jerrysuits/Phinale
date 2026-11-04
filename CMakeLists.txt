@@ -27,6 +27,7 @@ add_library(phinale_core
         src/liveness.cpp
         src/interference_graph.cpp
         src/coalescing.cpp
+        src/regalloc.cpp
 )
 target_include_directories(phinale_core PUBLIC include)
 
