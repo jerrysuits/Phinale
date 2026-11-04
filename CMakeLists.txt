@@ -74,3 +74,7 @@ add_test(NAME test_liveness_interference COMMAND test_liveness_interference)
 add_executable(test_coalescing tests/test_coalescing.cpp)
 target_link_libraries(test_coalescing PRIVATE phinale_core)
 add_test(NAME test_coalescing COMMAND test_coalescing)
+
+add_executable(test_regalloc_codegen tests/test_regalloc_codegen.cpp)
+target_link_libraries(test_regalloc_codegen PRIVATE phinale_core)
+add_test(NAME test_regalloc_codegen COMMAND test_regalloc_codegen)
