@@ -19,5 +19,6 @@ build/
 # Local inspection artifacts & notes
 *.dot
 *.png
+*.s
 todo.md
 TODO.md
