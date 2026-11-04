@@ -8,6 +8,8 @@
 #include "phinale/lexer.hpp"
 #include "phinale/liveness.hpp"
 #include "phinale/parser.hpp"
+#include "phinale/regalloc.hpp"
+#include "phinale/riscv_codegen.hpp"
 #include "phinale/sema.hpp"
 #include "phinale/ssa_builder.hpp"
 #include "phinale/ssa_destruction.hpp"
@@ -308,6 +310,54 @@ int main(int argc, char* argv[]) {
             std::cout << "  ✓ Wrote Coalesced Interference Graph to rig_coalesced.dot\n";
         } else {
             std::cerr << "  ✗ Warning: Failed to open rig_coalesced.dot for writing.\n";
+        }
+    }
+    std::cout << "\n";
+
+    // STAGE 10: CHAITIN-BRIGGS REGISTER ALLOCATION
+    std::cout << "[STAGE 10: CHAITIN-BRIGGS REGISTER ALLOCATION]\n";
+    phinale::ChaitinBriggsAllocator allocator;
+    auto alloc = allocator.allocate(rig, 26);
+    std::cout << "  Metrics:\n";
+    std::cout << "    Total virtual registers:     " << alloc.metrics.total_vregs << "\n";
+    std::cout << "    Colored registers:           " << alloc.metrics.colored_vregs << "\n";
+    std::cout << "    Spilled registers:           " << alloc.metrics.spilled_vregs << "\n";
+    std::cout << "    Physical registers used:     " << alloc.metrics.physical_registers_used << "\n";
+    std::cout << "    Stack frame allocation:      " << alloc.metrics.stack_frame_bytes << " bytes\n\n";
+
+    std::cout << "  Physical Register Assignments:\n";
+    std::vector<phinale::VReg> alloc_nodes;
+    alloc_nodes.reserve(alloc.color_map.size());
+    for (const auto& [node, _] : alloc.color_map) {
+        alloc_nodes.push_back(node);
+    }
+    std::sort(alloc_nodes.begin(), alloc_nodes.end());
+
+    for (const auto& node : alloc_nodes) {
+        int color = alloc.color_map.at(node);
+        std::cout << "    " << format_vreg(node) << " -> ";
+        if (color >= 0) {
+            std::cout << phinale::ChaitinBriggsAllocator::physical_reg_name(color)
+                      << " (color " << color << ")\n";
+        } else {
+            std::cout << "SPILL [offset " << alloc.spill_offset_map.at(node) << "(s0)]\n";
+        }
+    }
+    std::cout << "\n";
+
+    // STAGE 11: RISC-V RV32I ASSEMBLY OUTPUT
+    std::cout << "[STAGE 11: RISC-V RV32I ASSEMBLY OUTPUT]\n";
+    phinale::RISCVCodeGenerator codegen;
+    std::string assembly = codegen.generate(cfg, alloc, "main");
+    std::cout << assembly;
+
+    {
+        std::ofstream asm_file("output.s");
+        if (asm_file.is_open()) {
+            asm_file << assembly;
+            std::cout << "  ✓ Wrote RISC-V RV32I assembly to output.s\n";
+        } else {
+            std::cerr << "  ✗ Warning: Failed to open output.s for writing.\n";
         }
     }
 
