@@ -1,6 +1,7 @@
 #include "phinale/ast.hpp"
 #include "phinale/cfg.hpp"
 #include "phinale/cfg_builder.hpp"
+#include "phinale/coalescing.hpp"
 #include "phinale/dominance.hpp"
 #include "phinale/interference_graph.hpp"
 #include "phinale/ir_builder.hpp"
@@ -270,6 +271,43 @@ int main(int argc, char* argv[]) {
             std::cout << "\n  ✓ Wrote Interference Graph to rig.dot\n";
         } else {
             std::cerr << "\n  ✗ Warning: Failed to open rig.dot for writing.\n";
+        }
+    }
+    std::cout << "\n";
+
+    // STAGE 9: CONSERVATIVE COPY COALESCING (BRIGGS)
+    std::cout << "[STAGE 9: CONSERVATIVE COPY COALESCING (BRIGGS)]\n";
+    phinale::ConservativeCoalescer coalescer(cfg, rig, 27);
+    const auto& c_metrics = coalescer.get_metrics();
+    std::cout << "  Metrics:\n";
+    std::cout << "    Candidate copies examined:   " << c_metrics.candidate_copies_examined << "\n";
+    std::cout << "    Copies coalesced:             " << c_metrics.copies_coalesced << "\n";
+    std::cout << "    Rejected (interfering):       " << c_metrics.copies_rejected_interfering << "\n";
+    std::cout << "    Rejected (Briggs criterion): " << c_metrics.copies_rejected_briggs << "\n";
+    std::cout << "    Redundant self-copies erased: " << c_metrics.redundant_self_copies_removed << "\n";
+    std::cout << "    Remaining copies:            " << rig.moves().size() << "\n\n";
+
+    std::cout << "  Post-Coalescing CFG:\n";
+    print_cfg_summary(cfg);
+    std::cout << "\n";
+
+    {
+        std::ofstream cfg_c_file("cfg_coalesced.dot");
+        if (cfg_c_file.is_open()) {
+            cfg.dump_dot(cfg_c_file);
+            std::cout << "  ✓ Wrote Coalesced CFG to cfg_coalesced.dot\n";
+        } else {
+            std::cerr << "  ✗ Warning: Failed to open cfg_coalesced.dot for writing.\n";
+        }
+    }
+
+    {
+        std::ofstream rig_c_file("rig_coalesced.dot");
+        if (rig_c_file.is_open()) {
+            rig_c_file << rig.dump_dot();
+            std::cout << "  ✓ Wrote Coalesced Interference Graph to rig_coalesced.dot\n";
+        } else {
+            std::cerr << "  ✗ Warning: Failed to open rig_coalesced.dot for writing.\n";
         }
     }
 
