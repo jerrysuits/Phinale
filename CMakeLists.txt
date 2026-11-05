@@ -29,6 +29,7 @@ add_library(phinale_core
         src/coalescing.cpp
         src/regalloc.cpp
         src/riscv_codegen.cpp
+        src/benchmark.cpp
 )
 target_include_directories(phinale_core PUBLIC include)
 
