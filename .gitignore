@@ -20,5 +20,6 @@ build/
 *.dot
 *.png
 *.s
+*.csv
 todo.md
 TODO.md
