@@ -1,4 +1,5 @@
 #include "phinale/ast.hpp"
+#include "phinale/benchmark.hpp"
 #include "phinale/cfg.hpp"
 #include "phinale/cfg_builder.hpp"
 #include "phinale/coalescing.hpp"
@@ -111,13 +112,27 @@ static void print_cfg_summary(const phinale::ControlFlowGraph& cfg) {
 }
 
 int main(int argc, char* argv[]) {
+    bool run_benchmark = false;
     std::string source_code;
     bool has_file = false;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
-        if (arg == "--demo" || arg == "--all" || arg == "-h" || arg == "--help") {
+        if (arg == "--benchmark" || arg == "-b") {
+            run_benchmark = true;
             continue;
+        }
+        if (arg == "--demo" || arg == "--all") {
+            continue;
+        }
+        if (arg == "-h" || arg == "--help") {
+            std::cout << "Usage: phinale [options] [source_file.c]\n"
+                      << "Options:\n"
+                      << "  --demo         Run full 11-stage pipeline on demo program\n"
+                      << "  --all          Run all pipeline stages and export artifacts\n"
+                      << "  --benchmark    Run empirical benchmark suite (Baseline vs. Coalesced)\n"
+                      << "  -h, --help     Show this help message\n";
+            return 0;
         }
         if (!arg.empty() && arg[0] != '-') {
             std::ifstream file(arg);
@@ -131,6 +146,29 @@ int main(int argc, char* argv[]) {
             has_file = true;
             break;
         }
+    }
+
+    if (run_benchmark) {
+        std::cout << "=======================================================\n";
+        std::cout << "           PHINALE BENCHMARK SUITE EVALUATION          \n";
+        std::cout << "=======================================================\n\n";
+
+        phinale::BenchmarkRunner runner;
+        auto rows = runner.run_all({26, 4});
+
+        std::cout << phinale::BenchmarkRunner::format_markdown_table(rows) << "\n";
+
+        std::string csv_file = "benchmarks.csv";
+        if (phinale::BenchmarkRunner::export_csv(rows, csv_file)) {
+            std::cout << "✓ Exported benchmark metrics to " << csv_file << "\n";
+        } else {
+            std::cerr << "✗ Warning: Failed to export benchmarks to " << csv_file << "\n";
+        }
+
+        std::cout << "\n=======================================================\n";
+        std::cout << "               BENCHMARK COMPLETED OK                  \n";
+        std::cout << "=======================================================\n";
+        return 0;
     }
 
     if (!has_file) {
