@@ -79,3 +79,8 @@ add_test(NAME test_coalescing COMMAND test_coalescing)
 add_executable(test_regalloc_codegen tests/test_regalloc_codegen.cpp)
 target_link_libraries(test_regalloc_codegen PRIVATE phinale_core)
 add_test(NAME test_regalloc_codegen COMMAND test_regalloc_codegen)
+
+add_executable(test_benchmark tests/test_benchmark.cpp)
+target_link_libraries(test_benchmark PRIVATE phinale_core)
+add_test(NAME test_benchmark COMMAND test_benchmark)
+
